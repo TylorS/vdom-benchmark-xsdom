@@ -1,12 +1,13 @@
 'use strict';
 
 var benchmark = require('vdom-benchmark-base');
-var snabbdom = require('snabbdom/snabbdom');
-var patch = snabbdom.init([]);
-var h = require('snabbdom/h');
+var _xsdom = require('xs-dom');
+var elm = document.createElement('div');
+var xsdom = _xsdom.init([], elm);
+var h = _xsdom.h;
 
-var NAME = 'snabbdom';
-var VERSION = '0.1.0';
+var NAME = 'XSDOM';
+var VERSION = '0.0.9';
 
 function convertToVnodes(nodes) {
   var n, i, children = [];
@@ -25,24 +26,22 @@ function BenchmarkImpl(container, a, b) {
   this.container = container;
   this.a = a;
   this.b = b;
-  this.vnode = null;
 }
 
 BenchmarkImpl.prototype.setUp = function() {
 };
 
 BenchmarkImpl.prototype.tearDown = function() {
-  patch(this.vnode, h('div'));
+  xsdom.patch(h('div'));
 };
 
 BenchmarkImpl.prototype.render = function() {
-  var elm = document.createElement('div');
-  this.vnode = patch(elm, h('div', convertToVnodes(this.a)));
+  xsdom.patch(h('div', {}, convertToVnodes(this.a)));
   this.container.appendChild(elm);
 };
 
 BenchmarkImpl.prototype.update = function() {
-  this.vnode = patch(this.vnode, h('div', convertToVnodes(this.b)));
+  xsdom.patch(h('div', {}, convertToVnodes(this.b)));
 };
 
 document.addEventListener('DOMContentLoaded', function(e) {
